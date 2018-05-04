@@ -9,6 +9,11 @@ app.set('views', __dirname + '/views');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+app.get('/',(req, res) => {
+	res.render("index.html");
+});
+
+
 app.get('/timestamp',(req, res) => {
 	res.send(`${Date.now()}`);
 });
@@ -24,6 +29,6 @@ app.get('/getchampions',(req, res) => {
 	});
 });
 
-app.listen(8000);
+app.listen(3000);
 console.log("Listening on port 8000...");
 
