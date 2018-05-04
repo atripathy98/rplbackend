@@ -27,6 +27,6 @@ app.get('/getchampions',(req, res) => {
 	});
 });
 
-app.listen(5000);
+app.listen(app.get('port'));
 console.log("Listening on port 8000...");
 
