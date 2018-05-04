@@ -8,7 +8,7 @@ app.set('port', (process.env.PORT || 5000))
 app.use(express.static(__dirname + '/views'))
 
 app.get('/',(req, res) => {
-	res.render("index.html");
+	res.send("Hello world!");
 });
 
 
@@ -28,5 +28,5 @@ app.get('/getchampions',(req, res) => {
 });
 
 app.listen(app.get('port'));
-console.log("Listening on port 8000...");
+console.log("Listening on port 5000...");
 
