@@ -1,19 +1,47 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
+const admin = require('firebase-admin');
 
 const app = express();
 
-app.set('port', (process.env.PORT || 5000))
-app.use(express.static(__dirname + '/views'))
+app.set('port', (process.env.PORT || 5000));
+app.use(express.static(__dirname + '/views'));
 
-app.get('/',(req, res) => {
-	res.send("Hello world!");
+//FIREBASE PRIVATE SERVICE KEY
+const serviceAccount = require('./resources/serviceAccountKey.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://risingsummoners-e4e70.firebaseio.com"
 });
 
+//FIREBASE DB
+const db = admin.database();
+const summoners = db.ref("/summoners");
+const gamesref = db.ref("/laddergames");
 
-app.get('/timestamp',(req, res) => {
-	res.send(`${Date.now()}`);
+app.get('/',(req, res) => {
+	res.render("index.html");
+});
+
+app.get('/gameroom',(req, res) => {
+	if(!(req.query && req.query.gameid)){
+		//NO ROOM SPECIFIED
+	}else{
+		//ROOM SPECIFIED
+
+	}
+});
+
+app.get('/creategame',(req, res) => {
+	var gameskey = gamesref.push();
+	gameskey.set({
+		players: 0,
+		key: gameskey.key,
+		roster:{},
+		code:""
+	});
+	return res.json({success:true,gameid:gameskey.key});
 });
 
 app.get('/getchampions',(req, res) => {
