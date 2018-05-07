@@ -158,7 +158,7 @@ app.get('/gameRoom', async (req, res) => {
 					}
 				}
 				var rostersref = gamesref.child("/roster");
-				var alreadyRegisteredSnap = await summonersref.orderByChild("id").equalTo(accountdata.id).once('value');
+				var alreadyRegisteredSnap = await rostersref.orderByChild("id").equalTo(accountdata.id).once('value');
 				if(alreadyRegisteredSnap.numChildren() != 0){
 					response.message += " This player has already registered for this match.";
 				}else if(response.success){
