@@ -286,7 +286,7 @@ app.get('/gameRoom', async (req, res) => {
 			}else if(req.query.summonername && req.query.primary && req.query.secondary){
 				var summoner = req.query.summonername;
 				var accountdata = {
-					summonerName: summoner.toLowerCase().trim()
+					summonerName: summoner.toLowerCase().replace(" ","")
 				};
 				var currentDate = new Date();
 				var existingPlayer = await findSummoner(accountdata.summonerName);
@@ -299,7 +299,7 @@ app.get('/gameRoom', async (req, res) => {
 					if(summonerData.success){
 						var accountDetails = summonerData.data;
 						accountdata.summonerName = accountDetails.name;
-						accountdata.lowercaseName = accountDetails.name.toLowerCase().trim();
+						accountdata.lowercaseName = accountdata.summonerName;
 						accountdata.id = accountDetails.id.toString();
 						accountdata.accountId = accountDetails.accountId.toString();
 						accountdata.summonerLevel = accountDetails.summonerLevel;
