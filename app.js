@@ -207,7 +207,7 @@ async function getSummoner(summonername){
       url: "https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/"+summonername+"?api_key="+baseapi
     };
     try{
-    	response.data = await request.post(options);
+    	response.data = await request.get(options);
     	response.success = true;
     }catch(err){
     	response.success = false;
@@ -284,17 +284,18 @@ app.get('/gameRoom', async (req, res) => {
 				response.success = true;
 				response.message = "This game room is ready for admin approval.";
 			}else if(req.query.summonername && req.query.primary && req.query.secondary){
+				var summoner = req.query.summonername;
 				var accountdata = {
-					summonerName: req.query.summonername
+					summonerName: summoner.toLowerCase().trim()
 				};
 				var currentDate = new Date();
-				var existingPlayer = await findSummoner(accountdata.summonerName.toLowerCase().trim());
+				var existingPlayer = await findSummoner(accountdata.summonerName);
 				if(existingPlayer.success && (currentDate.getTime() - existingPlayer.time) < 86400000){
 					accountdata = existingPlayer.data;
 					response.success = true;
 					response.message = "Welcome back!";
 				}else{
-					var summonerData = await getSummoner(accountdata.summonerName.toLowerCase().trim());
+					var summonerData = await getSummoner(accountdata.summonerName);
 					if(summonerData.success){
 						var accountDetails = summonerData.data;
 						accountdata.summonerName = accountDetails.name;
