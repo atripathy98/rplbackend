@@ -29,17 +29,23 @@ const mmrData = require('./resources/mmr.json');
 
 //PROMISE CALLS
 async function findSummoner(summoner){
-	const snapshot = await summonersref.orderByChild("lowercaseName").equalTo(summoner).once('value');
 	var response = {};
-	if(snapshot.numChildren() != 0) {
-		var datum = snapshot.val();
-		var key = Object.keys(datum)[0];
-		response.success = true;
-		response.time = datum[key]["lastUpdated"];
-		response.data = datum[key];
-	}else{
-		response.success = false;
-	}
+	try{
+    	const snapshot = await summonersref.orderByChild("lowercaseName").equalTo(summoner).once('value');
+    	response.success = true;
+    	if(snapshot.numChildren() != 0) {
+			var datum = snapshot.val();
+			var key = Object.keys(datum)[0];
+			response.success = true;
+			response.time = datum[key]["lastUpdated"];
+			response.data = datum[key];
+		}else{
+			response.success = false;
+		}
+    }catch(err){
+    	response.success = false;
+    	response.data = err;
+    }
 	return response;
 }
 
@@ -55,7 +61,7 @@ async function getSummoner(summonername){
     	response.success = true;
     }catch(err){
     	response.success = false;
-    	response.data = err;
+    	response.data = "Summoner was not found or Riot API reached rate limit.";
     }
     return response;
 }
@@ -71,7 +77,7 @@ async function getRankedData(summonerid){
     	response.success = true;
     }catch(err){
     	response.success = false;
-    	response.data = err;
+    	response.data = "Summoner ranked data was not found or Riot API reached rate limit.";
     }
     return response;
 }
@@ -107,17 +113,17 @@ app.get('/gameRoom', async (req, res) => {
 					summonerName: req.query.summonername
 				};
 				var currentDate = new Date();
-				var existingPlayer = await findSummoner(accountdata.summonerName);
+				var existingPlayer = await findSummoner(accountdata.summonerName.toLowerCase().trim());
 				if(existingPlayer.success && (currentDate.getTime() - existingPlayer.time) < 86400000){
 					accountdata = existingPlayer.data;
 					response.success = true;
 					response.message = "Welcome back!";
 				}else{
-					var summonerData = await getSummoner(accountdata.summonerName.toLowerCase());
+					var summonerData = await getSummoner(accountdata.summonerName.toLowerCase().trim());
 					if(summonerData.success){
 						var accountDetails = summonerData.data;
 						accountdata.summonerName = accountDetails.name;
-						accountdata.lowercaseName = accountDetails.name.toLowerCase();
+						accountdata.lowercaseName = accountDetails.name.toLowerCase().trim();
 						accountdata.id = accountDetails.id.toString();
 						accountdata.accountId = accountDetails.accountId.toString();
 						accountdata.summonerLevel = accountDetails.summonerLevel;
@@ -157,23 +163,31 @@ app.get('/gameRoom', async (req, res) => {
 						response.error = summonerData.data;
 					}
 				}
-				var rostersref = gamesref.child("/roster");
-				var alreadyRegisteredSnap = await rostersref.orderByChild("id").equalTo(accountdata.id).once('value');
-				if(alreadyRegisteredSnap.numChildren() != 0){
-					response.message += " This player has already registered for this match.";
-				}else if(response.success){
+				if(response.success){
 					//ADD PLAYER TO ROOM
-					roomref.update({
-						players: players + 1
-					});
-					var roomChild = roomref.child("/roster");
-					var playerkeyref = roomChild.push();
-					playerkeyref.set({
-						id: accountdata.id,
-						primary:parseInt(req.query.primary),
-						secondary:parseInt(req.query.secondary)
-					});
-					response.message += " Player has been added to the game.";
+					var rostersref = roomref.child("/roster");
+					var alreadyRegisteredSnap = await rostersref.orderByChild("id").equalTo(accountdata.id).once('value');
+					if(alreadyRegisteredSnap.numChildren() != 0){
+						response.message += " This player has already registered for this match.";
+					}else{
+						players++;
+						if(players == 10){
+							roomref.update({
+								status: 1
+							});
+						}
+						roomref.update({
+							players: players
+						});
+						var roomChild = roomref.child("/roster");
+						var playerkeyref = roomChild.push();
+						playerkeyref.set({
+							id: accountdata.id,
+							primary:parseInt(req.query.primary),
+							secondary:parseInt(req.query.secondary)
+						});
+						response.message += " Player has been added to the game.";
+					}
 				}else{
 					response.message += " The application was unable to process this player.";
 				}
