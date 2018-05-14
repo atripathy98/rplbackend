@@ -43,6 +43,9 @@ exports.getGameData = async function(gameKey,includeKeys){
     		response.success = true;
     		var gameData = snapshot.val();
 			response.status = gameData.status;
+			if(response.status == 3){
+				response.matchId = gameData.matchId;
+			}
 			if(includeKeys){
 				response.roster = gameData.roster;
 			}else{
