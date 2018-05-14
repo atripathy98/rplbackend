@@ -119,6 +119,17 @@ exports.addPlayerToGame = async function(gameKey,accountId,mainRole,secRole){
 	return playerkeyref.key;
 }
 
+exports.getPlayerInfo = async function(accountId){
+	var snapshot = await summonersref.child("/"+accountId).once('value');
+	var playerData = snapshot.val();
+	var retData = {};
+	retData.name = playerData.summonerName;
+	retData.opgg = "http://na.op.gg/summoner/userName="+playerData.lowercaseName;
+	retData.wins = playerData.mmrData["RPL_LADDER"]["wins"];
+	retData.losses = playerData.mmrData["RPL_LADDER"]["losses"];
+	return retData;
+}
+
 exports.getAllGames = async function(){
 	var allGames = [];
 	var snapshot = await gamesref.once('value');

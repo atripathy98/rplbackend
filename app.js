@@ -50,6 +50,18 @@ app.get('/getGame', async (req, res) => {
 	return res.json(response);
 });
 
+app.get('/getPlayer', async (req, res) => {
+	var response = {};
+	if(!(req.query && req.query.id)){
+		response.message = "Player is not registered with RPL.";
+		response.success = false;
+	}else{
+		response = await fbconn.getPlayerInfo(req.query.id);
+		response.success = true;
+	}
+	return res.json(response);
+});
+
 //ADD A PLAYER TO A GAME
 app.get('/addPlayer', async (req, res) => {
 	var response = {};
