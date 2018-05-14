@@ -46,8 +46,8 @@ app.get('/getGame', async (req, res) => {
 		response.success = false;
 	}else{
 		response = await fbconn.getGameData(req.query.gamekey,false);
-		for(var i=0;i<response.roster.length;i++){
-			response.roster[i]["player"] = await fbconn.getPlayerInfo(req.query.id);
+		for(var i=0;i<response["roster"].length;i++){
+			response.roster[i]["player"] = await fbconn.getPlayerInfo(response.roster[i]["id"]);
 		}
 	}
 	return res.json(response);
