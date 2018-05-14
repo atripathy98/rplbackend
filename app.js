@@ -8,12 +8,12 @@ var cors = require('cors');
 
 const app = express();
 
-var corsOptions = {
+/*var corsOptions = {
   origin: 'http://risingsummoners.com',
   optionsSuccessStatus: 200
-}
+}*/
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/views'));
