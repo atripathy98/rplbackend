@@ -46,18 +46,9 @@ app.get('/getGame', async (req, res) => {
 		response.success = false;
 	}else{
 		response = await fbconn.getGameData(req.query.gamekey,false);
-	}
-	return res.json(response);
-});
-
-app.get('/getPlayer', async (req, res) => {
-	var response = {};
-	if(!(req.query && req.query.id)){
-		response.message = "Player is not registered with RPL.";
-		response.success = false;
-	}else{
-		response = await fbconn.getPlayerInfo(req.query.id);
-		response.success = true;
+		for(var i=0;i<response.roster.length;i++){
+			response.roster[i]["player"] = await fbconn.getPlayerInfo(req.query.id);
+		}
 	}
 	return res.json(response);
 });
