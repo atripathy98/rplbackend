@@ -3,9 +3,17 @@ const bodyParser = require('body-parser');
 var fbconn = require('./firebase-connector');
 var riotapi = require('./riot-api');
 var helper = require('./helper-functions');
+var cors = require('cors');
 
 
 const app = express();
+
+var corsOptions = {
+  origin: 'http://risingsummoners.com',
+  optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions));
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/views'));
