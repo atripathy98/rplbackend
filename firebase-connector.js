@@ -57,7 +57,7 @@ exports.getGameData = async function(gameKey,includeKeys){
 			}else if(response.status == 2){
 				response.code = gameData.code;
 			}else{
-				response.code = "Game has been completed.";
+				response.code = "Game completed.";
 			}
 		}else{
 			response.success = false;
