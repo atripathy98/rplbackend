@@ -46,11 +46,16 @@ exports.getGameData = async function(gameKey,includeKeys){
 			if(response.status == 3){
 				response.matchId = gameData.matchId;
 			}
-			if(includeKeys){
-				response.roster = gameData.roster;
+			if(gameData.roster){
+				if(includeKeys){
+					response.roster = gameData.roster;
+				}else{
+					response.roster = Object.values(gameData.roster);
+				}
 			}else{
-				response.roster = Object.values(gameData.roster);
+				response.roster = [];
 			}
+			
 			response.players = gameData.players;
 			if(response.status <= 1){
 				response.code = "Not available yet.";
