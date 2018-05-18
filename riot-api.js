@@ -2,7 +2,7 @@
 const request = require('request-promise');
 
 //RIOT API KEYS
-const baseapi = "RGAPI-ea2f8cf9-1b0d-4f00-a59f-e3a7f658cbf4";//"RGAPI-ca99041e-f455-4571-be1c-4d6e5c8d24a7";
+const baseapi = "RGAPI-ca99041e-f455-4571-be1c-4d6e5c8d24a7";
 const tourneyapi = "RGAPI-d6725b47-cbd7-40d0-a565-570e64c0f93c";
 
 async function getDataFromRiotGames(options){

@@ -116,12 +116,14 @@ exports.addPlayerToGame = async function(gameKey,accountId,mainRole,secRole){
 	}
 	var roomChild = roomref.child("/roster");
 	var playerkeyref = roomChild.push();
+	var accessKey = (Math.floor(1000 + Math.random() * 9000)).toString();
 	playerkeyref.set({
 		id: accountId,
 		mainrole:mainRole,
-		secrole:secRole
+		secrole:secRole,
+		accesskey:accessKey
 	});
-	return playerkeyref.key;
+	return accessKey;
 }
 
 exports.getPlayerInfo = async function(accountId){
@@ -215,8 +217,8 @@ exports.updateGameRoster = function(gameKey,gameRoster){
 	});
 }
 
-exports.deletePlayer = function(gameKey,playerKey){
+exports.deletePlayer = function(gameKey,accesskey){
 	var gameRosterObject = {};
-	var playerref = gamesref.child("/"+req.query.gamekey+"/roster/"+playerKey);2
+	var playerref = gamesref.child("/"+req.query.gamekey+"/roster").orderByChild("accesskey").equalTo(accesskey);
 	playerref.remove();
 }

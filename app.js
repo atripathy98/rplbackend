@@ -113,7 +113,7 @@ app.get('/addPlayer', async (req, res) => {
 				}else{
 					var mainrole = parseInt(req.query.primary);
 					var secrole = parseInt(req.query.secondary);
-					response.playerkey = await fbconn.addPlayerToGame(req.query.gamekey,accountData.id,mainrole,secrole);
+					response.accesskey = await fbconn.addPlayerToGame(req.query.gamekey,accountData.id,mainrole,secrole);
 					response.message += " Player has been added to the game.";
 				}
 			}
@@ -153,9 +153,9 @@ app.get('/approveGame', async (req, res) => {
 
 app.get('/removePlayer', async (req, res) => {
 	var response = {};
-	if(!(req.query && req.query.gamekey && req.query.playerkey)){
+	if(!(req.query && req.query.gamekey && req.query.accesskey)){
 		response.success = false;
-		response.message = "A 'gamekey' and 'playerkey' needs to be provided to remove a player.";
+		response.message = "A 'gamekey' and 'accesskey' needs to be provided to remove a player.";
 	}else{
 		var gameData = await fbconn.getGameData(req.query.gamekey,false);
 		if(!gameData.success){
@@ -166,7 +166,7 @@ app.get('/removePlayer', async (req, res) => {
 			response.message = "This game has already been approved.";
 		}else{
 			//STUCK HERE
-			fbconn.deletePlayer(req.query.gamekey,req.query.playerkey);
+			fbconn.deletePlayer(req.query.gamekey,req.query.accesskey);
 			response.success = true;
 			response.message = "Player has been removed from this game.";
 		}
